@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Format the json string, and display it to table.">
+  <meta name="author" content="Carey Tzou">
+  <title>JSON Point Parser</title>
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <!-- Custom styles for this template -->
+  <link href="css/json-point-parser.css" rel="stylesheet">
+  <!-- Custom styles for this page -->
+  <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h1 class="h3 mb-3 mt-3 text-gray-800">JSON Point Parser</h1>
+
+          <!-- Collapsable Card Example -->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button"
+              aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold text-primary">Json Source</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show" id="collapseCardExample">
+              <div class="card-body">
+                <p>Json Source :</p>
+                <textarea id="jsonSource" name="jsonSource"
+                  placeholder="Please input the complete JSON format data source!" rows="5"
+                  class="form-control"></textarea>
+                <div class="my-3"></div>
+                <div>
+                  <p id="scrollToSearch">Display Columns :</p>
+                  <!-- 不需要再修改这里，表头的列名，需要与json的字段一致，多个以英文逗号隔开，该值在解析后会本地保存。 -->
+                  <input id="displayColumns" name="displayColumns" style="background-color: aliceblue;"
+                    class="form-control"
+                    placeholder="Please input the columns that need to be displayed, separated by',', which will be saved locally after parsing."
+                    value="" />
+                </div>
+                <div class="my-3"></div>
+                <div>
+                  <p>Filter Rule :</p>
+                  <!-- 不需要再修改这里，表头的列名，需要与json的字段一致，多个以英文逗号隔开，该值在解析后会本地保存。 -->
+                  <input id="filterRule" name="filterRule" style="background-color: aliceblue;" class="form-control"
+                    placeholder="Please input the filter rule."
+                    value="{ &quot;pagetype&quot; : &quot;*&quot; , &quot;action&quot; : &quot;*&quot; }" />
+                </div>
+                <div class="my-3"></div>
+                <p>
+                  <input type="checkbox" id="needDuplicate" checked />
+                  <label for="needDuplicate" class="col-form-label ml-2">Need Duplicate ?</label>
+                </p>
+                <div class="my-4"></div>
+                <a href="#" class="btn btn-success btn-icon-split mr-4" id="parserJsonSource">
+                  <span class="text">Parser Json To DataTable</span>
+                </a>
+                <a href="#" class="btn btn-danger btn-icon-split" id="cleanJsonSource">
+                  <span class="text">Clean Json Source</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Result Table</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer fixed-bottom bg-gray-700">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; 2019 Tnidea. All rights reserved.</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/json-point-parser.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <script type="text/javascript">
+    var table;
+
+    Array.prototype.unique = function () {
+      var arr = [], n = {};
+      for (var i = 0; i < this.length; i++) {
+        if (!n[this[i]]) {
+          n[this[i]] = true; //存入hash表 
+          arr.push(this[i]);
+        }
+      }
+      return arr;
+    }
+
+    $(document).ready(function () {
+      //从cookie获取支持的列名，若存在则替换默认值
+      var _displayColimns = localStorage.getItem("point_displayColimns");
+      if (_displayColimns !== null && _displayColimns !== undefined) {
+        $("#displayColumns").val(_displayColimns);
+      }
+
+      var _filterRule = localStorage.getItem("point_filterRule");
+      if (_filterRule !== null && _filterRule !== undefined) {
+        $("#filterRule").val(_filterRule);
+      }
+
+      var _needDuplicate = localStorage.getItem("point_needDuplicate");
+      if (_needDuplicate !== null && _needDuplicate !== undefined) {
+        $("#needDuplicate").prop("checked",(_needDuplicate.toLowerCase() == "true"));
+      }
+    });
+
+    $("#cleanJsonSource").click(function () {
+      $("#jsonSource").val('');
+    });
+
+    $("#parserJsonSource").click(function () {
+      //获取json与需要展示的列
+      var jsonSource = $("#jsonSource").val();
+      var displayColumns = $("#displayColumns").val();
+      var filterRule = $("#filterRule").val();
+
+      var _jsonObject = JSON.parse(jsonSource);
+      var _columns = displayColumns.split(',');
+      var _filterRule = JSON.parse(filterRule);
+
+      var dataSet = new Array();
+
+      for (i = 0; i < _jsonObject.length; i++) {
+        var row = new Array();
+        var isremoved = false;
+        for (j = 0; j < _columns.length; j++) {
+          var _value = "";
+          var _object = _jsonObject[i];
+          var _columnName = _columns[j];
+          if (_object[_columnName] !== null && _object[_columnName] !== undefined) {
+            _value = _object[_columnName];
+          }
+
+          if (_filterRule !== null && _filterRule !== undefined && _filterRule[_columnName] !== null && _filterRule[_columnName] !== undefined) {
+            if (_filterRule[_columnName] == "*" && (_value == null || _value == "")) {
+              isremoved = true;
+              break;
+            }
+            if (_filterRule[_columnName] !== "*" && _filterRule[_columnName] !== "") {
+              var _rules = _filterRule[_columnName].split(',');
+              if ($.inArray(_value, _rules) == -1) {
+                isremoved = true;
+                break;
+              }
+            }
+
+          }
+
+          row[j] = _value;
+        }
+        if (!isremoved) {
+          dataSet.push(row);
+        }
+      }
+
+      var columnNames = new Array();
+      for (j = 0; j < _columns.length; j++) {
+        var _title = { "title": _columns[j] };
+        columnNames[j] = _title;
+      }
+
+      if (table !== null && table !== undefined) {
+        table.destroy();
+        $('#dataTable').empty();
+      }
+
+      var needDuplicate = $("#needDuplicate").is(':checked');
+
+      if (needDuplicate) {
+        dataSet = dataSet.unique();
+      }
+
+      table = $('#dataTable').DataTable({
+        data: dataSet,
+        columns: columnNames
+      });
+
+      localStorage.setItem("point_displayColimns", displayColumns);
+      localStorage.setItem("point_filterRule", filterRule);
+      localStorage.setItem("point_needDuplicate", needDuplicate);
+
+      $('body,html').animate({ scrollTop: $('#scrollToSearch').offset().top }, 200);
+    });
+  </script>
+</body>
+
+</html>
