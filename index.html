@@ -64,7 +64,7 @@
                 <div class="my-3"></div>
                 <p>
                   <input type="checkbox" id="needDuplicate" checked />
-                  <label for="needDuplicate" class="col-form-label ml-2">Need Duplicate ?</label>
+                  <label for="needDuplicate" class="col-form-label ml-2">Need Remove Duplicate?</label>
                 </p>
                 <div class="my-4"></div>
                 <a href="#" class="btn btn-success btn-icon-split mr-4" id="parserJsonSource">
@@ -230,7 +230,8 @@
 
       table = $('#dataTable').DataTable({
         data: dataSet,
-        columns: columnNames
+        columns: columnNames,
+        lengthMenu: [ 20, 50, 80, 100 ]
       });
 
       localStorage.setItem("point_displayColimns", displayColumns);
