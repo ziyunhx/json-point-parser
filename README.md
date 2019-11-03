@@ -4,11 +4,11 @@ Json 解析工具，将 json 数组转换为 datatable 展示，方便查看与�
 
 使用纯 html 与 js 实现，无服务端代码；所有操作均在浏览器本地完成，数据不会上传到服务器。代码已经开源到 [json-point-parser](https://github.com/ziyunhx/json-point-parser) 。你可以自行下载后直接打开或者部署到服务器，也可以访问我部署的在线版本，网址为：https://point.tnidea.com/。
 
- ![Image](https://www.tnidea.com/media/image/point-main.png)
+ ![Image](https://raw.githubusercontent.com/ziyunhx/MyBlog/master/source/media/image/point-main.png)
 
  网页使用了 dataTables 作为显示控件，因此你可以自定义排序和搜索，也可以设置每页显示的条数。
 
- ![Image](https://www.tnidea.com/media/image/point-table.png)
+ ![Image](https://raw.githubusercontent.com/ziyunhx/MyBlog/master/source/media/image/point-table.png)
 
  你可以通过自定义 Display Columns 字段来实现仅显示希望展示的列，多个字段使用 ',' 分割，这里仅支持使用完整的列名来表示。当然，你也可以留空或者使用 '*' 来显示所有的列。
 
@@ -16,7 +16,7 @@ Json 解析工具，将 json 数组转换为 datatable 展示，方便查看与�
 
     [{"col1":"123","col3":"222"},{"col1":"345","col4":123}]
 
-  ![Image](https://www.tnidea.com/media/image/point-json-obj.png)
+  ![Image](https://raw.githubusercontent.com/ziyunhx/MyBlog/master/source/media/image/point-json-obj.png)
 
  Filter Rule 字段被用于筛选展示数据，它使用 json 对象表示，例如我需要展示 name 不为空的，且年龄为 18 或 19 的数据，可以使用以下方式表示：
 
