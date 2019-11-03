@@ -40,7 +40,7 @@ div.dataTables_wrapper div.dataTables_filter label {
 div.dataTables_wrapper div.dataTables_filter input {
   margin-left: 0.5em;
   display: inline-block;
-  width: calc(100% - 4.25em);
+  width: calc(100% - 4.5em);
 }
 div.dataTables_wrapper div.dataTables_info {
   padding-top: 0.85em;
